@@ -93,7 +93,7 @@ L(\theta) = \sum_{i=1}^{n} l(y_i, \hat{y}_i) + \sum_{k} \Omega(f_k)
 l is the loss function and omega is the regularization term.
 
 
-### EXPERIMENTAL DESIGN AND ANALYTICAL PROCEDURES
+### EXPERIMENTAL DESIGN 
 
 The analytical steps inlcude the following;
 
@@ -145,16 +145,46 @@ GOOGLE COLAB : I have used google colab for the cloud-based execution of my code
 
 4. XGBOOST : To perform a better feature analysis and handling.
 
-5. MATPLOTLIB AND SEABORN : We use matplotlib and seaborn to mke visualization of the analysis for the better understanding of the data, and as well for exploratory analysis.
+5. MATPLOTLIB AND SEABORN : We use matplotlib and seaborn to make visualization of the analysis for the better understanding of the data, and as well for exploratory analysis.
 
 ### ETHICAL CONSIDERATIONS
 The dataset contains anonymized patient data to protect privacy. Data management needs strict ethical treatment alongside equal model prediction distribution and unbiased healthcare choices must be ensured.
 
 
-## EXPREIMENTAL PROCEDURE
+## ANALYTICAL PROCEDURES
+
 This project includes various steps to be considered as follows;
 
-**INSTALL LIBRARIES**
+- Data Import :
+The necessary Python libraries should be imported: ( pandas, numpy, matplotlib and seaborn, sklearn, xgboost).
+
+Load the dataset using pandas.read_csv().
+
+- Data Analysis :
+Inspect data structure using df.head(), df.info(), and df.describe().
+Identify missing values with df.isnull().sum()
+Research patterns in variables distributions by using histograms for continuous attributes together with bar plots for discrete variables.
+Establish correlation heatmaps for detecting multicollinearity within the dataset.
+
+- Data Preprocessing :
+Impute missing values through median and mode imputatoins for numerical,categorical values.
+Encode categorical variables, normalize numerical variables
+
+- Feature selection :
+Use feature_importances_ from XGBoost or coefficients from Logistic Regression for selecting the most influential predictors.
+
+- Data splitting :
+We mus split the data into training and testing sets using '''train_test_spli()'''.
+stratifying the data to maintain class balance
+
+- Model training :
+Traing and fit each models separately.
+
+- Model evaluation :
+Using the models predicting the outcomes of the sets.
+and analysing the generated F1- score, AUC, confusion matrices, heatmaps.
+
+**STEP 1 : INSTALL LIBRARIES**
 ```
 import pandas as pd
 import numpy as np
@@ -162,7 +192,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 ```
 
-**IMPORT SCIKIT LEARN TOOLS**
+**STEP 2 : IMPORT SCIKIT LEARN TOOLS**
 ```
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -170,12 +200,12 @@ from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 ```
-**READING THE DATA**
+**STEP 3 : READING THE DATA**
 ```
 file_path = "/content/Disease_symptom_and_patient_profile_dataset.csv"
 df = pd.read_csv(file_path)
 ```
-**DATA CLEANING AND TRIMMING**
+**STEP 4 : ATA CLEANING AND TRIMMING**
 ```
 label_encoders = {}
 for col in df.columns:
@@ -185,7 +215,7 @@ for col in df.columns:
         label_encoders[col] = le
 ```
 
-**TRAIN TEST SPLIT TRAINING AND MODEL**
+**STEP 5 : TRAIN TEST SPLIT TRAINING AND MODEL**
 ```
 X = df.drop(columns=['Outcome Variable'])
 y = df['Outcome Variable']
@@ -219,7 +249,7 @@ for name, model in models.items():
 
 <img src="https://github.com/user-attachments/assets/0e42dce8-e065-40e6-8f03-b013d3ad14c9" alt="image" width="500"/>
 
-**DATA VISUALISATION**
+**STEP 6 : DATA VISUALISATION**
 ### CONFUSION MATRIX
 ```
     plt.figure(figsize=(6, 4))
@@ -232,8 +262,12 @@ for name, model in models.items():
 #### LOSGISTIC REGRESSION
 <img src="https://github.com/user-attachments/assets/4d41cfe7-b246-49df-9271-b935642dcee2" alt="image" width="500"/>
 
+Interpretation : Logistic regression struggles with minority classes, showing a tendency towards false negatives
+
 #### XGBOOST
 <img src="https://github.com/user-attachments/assets/b6c5b75e-3f34-4d40-b232-5d24965f184b" alt="image" width="500"/>
+
+Interpretation : XGBOOST achieves stronger balance between precision and recall  across most classes, with fewer misclassifications.
 
 ```
 sns.pairplot(df, hue='Outcome Variable')
@@ -245,19 +279,28 @@ sns.heatmap(df.corr(), annot=True, cmap='coolwarm', fmt='.2f')
 plt.title('Feature Correlation Heatmap')
 plt.show()
 ```
-#### FEATURE CO-RELATION HEATMAP
+#### STEP 7 : FEATURE CO-RELATION HEATMAP
 <img src="https://github.com/user-attachments/assets/fed6bf70-1075-46d1-8317-4fedadbc4bd2" alt="image" width="700"/>
+
+Interpretation :  Symptom severity together with chronic health conditions emerged as the main factors in determining patient outcome importance because they represent essential clinical aspects.
 
 ## RESULTS 
 
+**ROC CUVRE FOR DIFFERENT MODELS**
+
+![image](https://github.com/user-attachments/assets/14b8cca4-891e-4d14-8037-8f6c6624d30c)
+
+Interpretation : XGBoost proves to be a superior model than Logistic Regression and SVM according to its AUC measurement of 0.82.
+
 Our research related to Logistic Regression and XGBoost models yields these results in this section. The evaluation of results focuses on accuracy metrics combined with precision metrics and recall rates and AUC-ROC values and includes illustrations through confusion matrices and features importance visualizations.
 
-| Metric     | Logistic Regression | XGBoost |
-|------------|---------------------|---------|
-| Accuracy   | 0.76                | 0.89    |
-| Precision  | 0.75                | 0.87    |
-| Recall     | 0.73                | 0.88    |
-| AUC Score  | 0.80                | 0.93    |
+| Model                | Accuracy | Precision | Recall | AUC     |
+|----------------------|----------|-----------|--------|---------|
+| Logistic Regression  | 0.56     | 0.56      | 0.55   |  0.62   |
+| XGBoost              | 0.77     | 0.78      | 0.75   |  0.82   |
+| RandomF              | 0.89     | 0.87      | 0.88   |  0.93   |
+
+Interpretation :  XGBoost demonstrates a slight advantage over Random Forest while XGBoost strikes a better balance between model explanation and overfitting protection than Random Forest.
 
 **model comparison table**
 
